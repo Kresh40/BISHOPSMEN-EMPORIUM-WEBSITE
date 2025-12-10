@@ -863,16 +863,15 @@ function toggleEditProfile() {
 
 // Open admin login (prompts for credentials and requests token)
 async function openAdminLogin() {
-    const email = prompt('Admin email');
-    if (!email) return;
-    const password = prompt('Password');
+    // Prompt for password only — email is not required for demo admin access
+    const password = prompt('Enter admin password');
     if (!password) return;
 
     try {
         const res = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ password })
         });
         if (!res.ok) {
             const err = await res.json();
@@ -884,7 +883,8 @@ async function openAdminLogin() {
         localStorage.setItem('authenticated', 'true');
         localStorage.setItem('isAdmin', data.user && data.user.role === 'admin' ? 'true' : 'false');
         localStorage.setItem('userName', data.user.name || 'Admin');
-        localStorage.setItem('userEmail', data.user.email || email);
+        // userEmail may not be provided by the server; keep existing or fallback
+        localStorage.setItem('userEmail', data.user && data.user.email ? data.user.email : (localStorage.getItem('userEmail') || 'admin@bishopsmen.com'));
         updateAdminDashboardVisibility();
         navigateTo('admin-dashboard');
     } catch (err) {
