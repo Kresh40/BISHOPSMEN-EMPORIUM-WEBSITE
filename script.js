@@ -386,10 +386,23 @@ function logout() {
 
 // Navigation
 function navigateTo(page) {
+    // Admin-only protection: redirect non-admins away
+    if (page === 'admin-dashboard' && !isAdmin()) {
+        alert('Access denied: Admins only');
+        page = 'home';
+    }
+
+    // Require authentication for user dashboard
+    if (page === 'user-dashboard' && localStorage.getItem('authenticated') !== 'true') {
+        alert('Please login to view your dashboard');
+        page = 'home';
+    }
+
     currentPage = page;
-    
+
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(page).classList.add('active');
+    const target = document.getElementById(page);
+    if (target) target.classList.add('active');
     
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
@@ -397,9 +410,13 @@ function navigateTo(page) {
             link.classList.add('active');
         }
     });
-    
+
     if (page === 'shop') {
         renderProducts();
+    } else if (page === 'admin-dashboard') {
+        loadAdminDashboard();
+    } else if (page === 'user-dashboard') {
+        loadUserDashboard();
     }
 }
 
@@ -418,54 +435,66 @@ function filterCategory(category) {
 }
 
 // Render Products with Naira prices
-function renderProducts() {
+async function renderProducts() {
     const grid = document.getElementById('productsGrid');
-    const filteredProducts = currentCategory === 'all' 
-        ? products 
-        : products.filter(p => p.category === currentCategory);
-    
-    grid.innerHTML = filteredProducts.map(product => {
-        const nairaPrice = usdToNgn(product.price);
-        return `
-            <div class="product-card" onclick="openProductModal('${product.id}')">
-                <div class="product-image">
-                    <img src="${product.image}" alt="${product.name}">
-                </div>
-                <div class="product-info">
-                    <div class="product-brand">${product.brand}</div>
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-footer">
-                        <span class="product-price">${formatNaira(nairaPrice)}</span>
-                        <span class="product-condition">${product.condition}</span>
+    grid.innerHTML = '<div class="loading">Loading products...</div>';
+    try {
+        const res = await fetch('/api/products');
+        const allProducts = await res.json();
+        const filteredProducts = currentCategory === 'all' ? allProducts : allProducts.filter(p => p.category === currentCategory);
+
+        grid.innerHTML = filteredProducts.map(product => {
+            const nairaPrice = usdToNgn(product.price);
+            return `
+                <div class="product-card" onclick="openProductModal('${product.id}')">
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-brand">${product.brand}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-footer">
+                            <span class="product-price">${formatNaira(nairaPrice)}</span>
+                            <span class="product-condition">${product.condition}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+    } catch (err) {
+        grid.innerHTML = '<div class="error">Failed to load products</div>';
+        console.error(err);
+    }
 }
 
 // Product Modal functions
-function openProductModal(productId) {
-    selectedProduct = products.find(p => p.id === productId);
-    if (!selectedProduct) return;
-    
-    selectedSize = selectedProduct.sizes[0];
-    const nairaPrice = usdToNgn(selectedProduct.price);
-    
-    document.getElementById('modalImage').src = selectedProduct.image;
-    document.getElementById('modalBrand').textContent = selectedProduct.brand;
-    document.getElementById('modalName').textContent = selectedProduct.name;
-    document.getElementById('modalPrice').textContent = formatNaira(nairaPrice);
-    document.getElementById('modalCondition').textContent = selectedProduct.condition;
-    
-    const sizeOptions = document.getElementById('sizeOptions');
-    sizeOptions.innerHTML = selectedProduct.sizes.map(size => `
-        <button class="size-btn ${size === selectedSize ? 'active' : ''}" onclick="selectSize('${size}')">
-            ${size}
-        </button>
-    `).join('');
-    
-    document.getElementById('productModal').classList.add('active');
+async function openProductModal(productId) {
+    try {
+        const res = await fetch('/api/products');
+        const allProducts = await res.json();
+        selectedProduct = allProducts.find(p => p.id === productId);
+        if (!selectedProduct) return;
+
+        selectedSize = selectedProduct.sizes[0];
+        const nairaPrice = usdToNgn(selectedProduct.price);
+
+        document.getElementById('modalImage').src = selectedProduct.image;
+        document.getElementById('modalBrand').textContent = selectedProduct.brand;
+        document.getElementById('modalName').textContent = selectedProduct.name;
+        document.getElementById('modalPrice').textContent = formatNaira(nairaPrice);
+        document.getElementById('modalCondition').textContent = selectedProduct.condition;
+
+        const sizeOptions = document.getElementById('sizeOptions');
+        sizeOptions.innerHTML = selectedProduct.sizes.map(size => `
+            <button class="size-btn ${size === selectedSize ? 'active' : ''}" onclick="selectSize('${size}')">
+                ${size}
+            </button>
+        `).join('');
+
+        document.getElementById('productModal').classList.add('active');
+    } catch (err) {
+        console.error('Failed to open product modal', err);
+    }
 }
 
 function closeProductModal() {
@@ -615,65 +644,6 @@ function submitContactForm(e) {
     }, 3000);
 }
 
-// Initialize everything
-document.addEventListener('DOMContentLoaded', () => {
-    // Set footer year
-    document.getElementById('footerYear').textContent = new Date().getFullYear();
-    
-    // Initialize cart
-    updateCart();
-    
-    // Initialize theme
-    initTheme();
-    
-    // Bind theme toggle button
-    const themeBtn = document.getElementById('themeToggle');
-    if (themeBtn) {
-        themeBtn.addEventListener('click', toggleTheme);
-        updateThemeIcon(); // Initial icon update
-    }
-    
-    // Bind search input
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', handleSearchInput);
-    }
-    
-    // Check authentication
-    if (localStorage.getItem('authenticated') === 'true') {
-        const navBar = document.querySelector('.nav-bar');
-        const footer = document.querySelector('.site-footer');
-        
-        if (navBar) navBar.classList.add('authenticated');
-        if (footer) footer.classList.add('authenticated');
-        
-        navigateTo('shop');
-    } else {
-        navigateTo('home');
-    }
-    
-    // Bind auth toggle button
-    const authToggle = document.getElementById('authToggleBtn');
-    if (authToggle) {
-        authToggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            toggleAuthMode();
-        });
-    }
-    
-    // Bind login and register forms
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-    }
-    
-    if (registerForm) {
-        registerForm.addEventListener('submit', handleRegister);
-    }
-});
-
 // ===== DASHBOARD FUNCTIONS =====
 
 // Check if user is admin (for demo, check localStorage)
@@ -684,61 +654,136 @@ function isAdmin() {
 // Show/hide admin dashboard based on role
 function updateAdminDashboardVisibility() {
     const adminLink = document.querySelector('.admin-only');
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
     if (adminLink) {
         adminLink.style.display = isAdmin() ? 'block' : 'none';
     }
+    if (adminLoginBtn) {
+        adminLoginBtn.style.display = isAdmin() ? 'none' : 'inline-block';
+    }
 }
 
-// Load admin dashboard data
-function loadAdminDashboard() {
-    // Sample data - in real app, fetch from backend
-    const totalOrders = 42;
-    const totalRevenue = 1250000; // NGN
-    const activeUsers = 156;
-    const totalProducts = products.length;
-    
-    document.getElementById('totalOrders').textContent = totalOrders;
-    document.getElementById('totalRevenue').textContent = formatNaira(totalRevenue);
-    document.getElementById('activeUsers').textContent = activeUsers;
-    document.getElementById('totalProducts').textContent = totalProducts;
-    
-    // Load recent orders
-    const ordersTableBody = document.getElementById('ordersTableBody');
-    const sampleOrders = [
-        { id: 'ORD-001', customer: 'John Doe', amount: 89999, status: 'Completed', date: '2024-12-08' },
-        { id: 'ORD-002', customer: 'Jane Smith', amount: 125000, status: 'Pending', date: '2024-12-09' },
-        { id: 'ORD-003', customer: 'Mike Johnson', amount: 74999, status: 'Completed', date: '2024-12-09' }
-    ];
-    
-    if (sampleOrders.length > 0) {
-        ordersTableBody.innerHTML = sampleOrders.map(order => `
-            <tr>
-                <td>${order.id}</td>
-                <td>${order.customer}</td>
-                <td>${formatNaira(order.amount)}</td>
-                <td><span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.875rem; background: ${order.status === 'Completed' ? 'rgba(76, 175, 80, 0.1); color: #4CAF50;' : 'rgba(255, 152, 0, 0.1); color: #FF9800;'}">${order.status}</span></td>
-                <td>${order.date}</td>
-            </tr>
+// Load admin dashboard data (fetch from server)
+async function loadAdminDashboard() {
+    try {
+        const res = await fetch('/api/products');
+        const productsFromApi = await res.json();
+
+        // Stats
+        const totalOrders = 42; // placeholder
+        const totalRevenue = productsFromApi.reduce((s, p) => s + usdToNgn(p.price), 0);
+        const activeUsers = 156; // placeholder
+        const totalProducts = productsFromApi.length;
+
+        document.getElementById('totalOrders').textContent = totalOrders;
+        document.getElementById('totalRevenue').textContent = formatNaira(totalRevenue);
+        document.getElementById('activeUsers').textContent = activeUsers;
+        document.getElementById('totalProducts').textContent = totalProducts;
+
+        // Recent orders (static sample for demo)
+        const ordersTableBody = document.getElementById('ordersTableBody');
+        const sampleOrders = [
+            { id: 'ORD-001', customer: 'John Doe', amount: 89999, status: 'Completed', date: '2024-12-08' },
+            { id: 'ORD-002', customer: 'Jane Smith', amount: 125000, status: 'Pending', date: '2024-12-09' },
+            { id: 'ORD-003', customer: 'Mike Johnson', amount: 74999, status: 'Completed', date: '2024-12-09' }
+        ];
+
+        if (sampleOrders.length > 0) {
+            ordersTableBody.innerHTML = sampleOrders.map(order => `
+                <tr>
+                    <td>${order.id}</td>
+                    <td>${order.customer}</td>
+                    <td>${formatNaira(order.amount)}</td>
+                    <td><span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.875rem; ${order.status === 'Completed' ? 'background: rgba(76, 175, 80, 0.1); color: #4CAF50;' : 'background: rgba(255, 152, 0, 0.1); color: #FF9800;'}">${order.status}</span></td>
+                    <td>${order.date}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Show/hide Add Product button for admins
+        const addBtn = document.getElementById('addProductBtn');
+        if (addBtn) addBtn.style.display = isAdmin() ? 'inline-block' : 'none';
+
+        // Product list
+        const adminProductList = document.getElementById('adminProductList');
+        adminProductList.innerHTML = productsFromApi.map(product => `
+            <div class="admin-product-item">
+                <div class="admin-product-image">
+                    <img src="${product.image}" alt="${product.name}">
+                </div>
+                <div class="admin-product-info">
+                    <div class="admin-product-name">${product.name}</div>
+                    <div class="admin-product-details">${product.brand} • ${product.category} • ${formatNaira(usdToNgn(product.price))}</div>
+                </div>
+                <div class="admin-product-actions">
+                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="editProduct('${product.id}')">Edit</button>
+                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="deleteProduct('${product.id}')">Delete</button>
+                </div>
+            </div>
         `).join('');
+    } catch (err) {
+        console.error('Failed to load admin dashboard', err);
     }
-    
-    // Load product list
-    const adminProductList = document.getElementById('adminProductList');
-    adminProductList.innerHTML = products.map(product => `
-        <div class="admin-product-item">
-            <div class="admin-product-image">
-                <img src="${product.image}" alt="${product.name}">
-            </div>
-            <div class="admin-product-info">
-                <div class="admin-product-name">${product.name}</div>
-                <div class="admin-product-details">${product.brand} • ${product.category} • ${formatNaira(usdToNgn(product.price))}</div>
-            </div>
-            <div class="admin-product-actions">
-                <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Edit</button>
-                <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Delete</button>
-            </div>
-        </div>
-    `).join('');
+}
+
+// ===== Admin product management actions (client-side demo only) =====
+// Admin product management using server API
+async function deleteProduct(productId) {
+    if (!isAdmin()) { alert('Admin only'); return; }
+    if (!confirm('Delete this product?')) return;
+    const token = localStorage.getItem('authToken');
+    const res = await fetch(`/api/products/${productId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+    if (res.ok) {
+        await loadAdminDashboard();
+        await renderProducts();
+    } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to delete');
+    }
+}
+
+async function editProduct(productId) {
+    if (!isAdmin()) { alert('Admin only'); return; }
+    const name = prompt('Product name (leave blank to keep)');
+    const price = prompt('Price in USD (leave blank to keep)');
+    const category = prompt('Category (leave blank to keep)');
+    const token = localStorage.getItem('authToken');
+    const payload = {};
+    if (name) payload.name = name.trim();
+    if (price && !isNaN(parseFloat(price))) payload.price = parseFloat(price);
+    if (category) payload.category = category.trim();
+    if (Object.keys(payload).length === 0) return;
+    const res = await fetch(`/api/products/${productId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
+    if (res.ok) {
+        await loadAdminDashboard();
+        await renderProducts();
+    } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to edit');
+    }
+}
+
+async function addProduct() {
+    if (!isAdmin()) { alert('Admin only'); return; }
+    const name = prompt('Product name');
+    if (!name) return;
+    const price = prompt('Price in USD');
+    if (!price || isNaN(parseFloat(price))) { alert('Invalid price'); return; }
+    const category = prompt('Category (e.g., polos, shorts, shirts)') || 'uncategorized';
+    const brand = prompt('Brand') || 'Unknown';
+    const image = prompt('Image URL') || 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600';
+    const sizesInput = prompt('Sizes (comma separated) e.g. S,M,L') || '';
+    const sizes = sizesInput.split(',').map(s => s.trim()).filter(Boolean);
+    const token = localStorage.getItem('authToken');
+    const payload = { name: name.trim(), price: parseFloat(price), category: category.trim(), brand, image, sizes: sizes.length ? sizes : ['One Size'], condition: 'Like New' };
+    const res = await fetch('/api/products', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
+    if (res.ok) {
+        await loadAdminDashboard();
+        await renderProducts();
+    } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to add product');
+    }
 }
 
 // Load user dashboard data
@@ -816,19 +861,100 @@ function toggleEditProfile() {
     alert('Edit Profile functionality would open a modal form');
 }
 
-// Override navigateTo to handle dashboard loading
-const originalNavigateTo = navigateTo;
-function navigateTo(page) {
-    originalNavigateTo(page);
-    
-    if (page === 'admin-dashboard') {
-        loadAdminDashboard();
-    } else if (page === 'user-dashboard') {
-        loadUserDashboard();
+// Open admin login (prompts for credentials and requests token)
+async function openAdminLogin() {
+    const email = prompt('Admin email');
+    if (!email) return;
+    const password = prompt('Password');
+    if (!password) return;
+
+    try {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            alert(err.error || 'Login failed');
+            return;
+        }
+        const data = await res.json();
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('authenticated', 'true');
+        localStorage.setItem('isAdmin', data.user && data.user.role === 'admin' ? 'true' : 'false');
+        localStorage.setItem('userName', data.user.name || 'Admin');
+        localStorage.setItem('userEmail', data.user.email || email);
+        updateAdminDashboardVisibility();
+        navigateTo('admin-dashboard');
+    } catch (err) {
+        console.error('Admin login failed', err);
+        alert('Login failed');
     }
 }
 
-// Update admin visibility on page load
+// Initialize everything
 document.addEventListener('DOMContentLoaded', () => {
+    // Set footer year
+    document.getElementById('footerYear').textContent = new Date().getFullYear();
+    
+    // Initialize cart
+    updateCart();
+    
+    // Initialize theme
+    initTheme();
+    
+    // Bind theme toggle button
+    const themeBtn = document.getElementById('themeToggle');
+    if (themeBtn) {
+        themeBtn.addEventListener('click', toggleTheme);
+        updateThemeIcon(); // Initial icon update
+    }
+    
+    // Bind search input
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearchInput);
+    }
+    
+    // Check authentication
+    if (localStorage.getItem('authenticated') === 'true') {
+        const navBar = document.querySelector('.nav-bar');
+        const footer = document.querySelector('.site-footer');
+        
+        if (navBar) navBar.classList.add('authenticated');
+        if (footer) footer.classList.add('authenticated');
+        
+        navigateTo('shop');
+    } else {
+        navigateTo('home');
+    }
+    
+    // Bind auth toggle button
+    const authToggle = document.getElementById('authToggleBtn');
+    if (authToggle) {
+        authToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleAuthMode();
+        });
+    }
+    
+    // Bind login and register forms
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+    
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
+    }
+    
+    // Bind admin login button
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    if (adminLoginBtn) adminLoginBtn.addEventListener('click', (e) => { e.preventDefault(); openAdminLogin(); });
+    
+    // Update admin visibility on page load
     updateAdminDashboardVisibility();
 });

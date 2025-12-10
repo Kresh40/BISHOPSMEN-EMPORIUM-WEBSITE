@@ -1,0 +1,92 @@
+[
+  {
+    "id": "1",
+    "name": "Cotton Polo Shirt",
+    "category": "polos",
+    "price": 49.99,
+    "image": "https://images.unsplash.com/photo-1618799613432-92b276e96a7d?w=600",
+    "sizes": ["S","M","L","XL","XXL"],
+    "condition": "Excellent",
+    "brand": "Ralph Lauren"
+  },
+  {
+    "id": "2",
+    "name": "Oxford Dress Shirt",
+    "category": "shirts",
+    "price": 49.99,
+    "image": "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600",
+    "sizes": ["M","L","XL"],
+    "condition": "Like New",
+    "brand": "Brooks Brothers"
+  },
+  {
+    "id": "3",
+    "name": "Khaki Shorts",
+    "category": "shorts",
+    "price": 39.99,
+    "image": "https://images.unsplash.com/photo-1517949645590-b03de20d69a6?w=600",
+    "sizes": ["28","30","32","34","36"],
+    "condition": "Excellent",
+    "brand": "Tommy Hilfiger"
+  },
+  {
+    "id": "4",
+    "name": "Leather Dress Shoes",
+    "category": "shoes",
+    "price": 89.99,
+    "image": "https://images.unsplash.com/photo-1614252369475-531eba835eb1?w=600",
+    "sizes": ["9","9.5","10","10.5","11"],
+    "condition": "Very Good",
+    "brand": "Allen Edmonds"
+  },
+  {
+    "id": "6",
+    "name": "Wool Trousers",
+    "category": "pants",
+    "price": 69.99,
+    "image": "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600",
+    "sizes": ["32","34","36","38"],
+    "condition": "Like New",
+    "brand": "J.Crew"
+  },
+  {
+    "id": "7",
+    "name": "Silk Tie Collection",
+    "category": "accessories",
+    "price": 29.99,
+    "image": "https://images.unsplash.com/photo-1589756823695-278bc8f28e1b?w=600",
+    "sizes": ["One Size"],
+    "condition": "Excellent",
+    "brand": "Hermès"
+  },
+  {
+    "id": "8",
+    "name": "Leather Belt",
+    "category": "accessories",
+    "price": 39.99,
+    "image": "https://images.unsplash.com/photo-1624222247344-550fb60583bb?w=600",
+    "sizes": ["32","34","36","38"],
+    "condition": "Very Good",
+    "brand": "Coach"
+  },
+  {
+    "id": "9",
+    "name": "Denim Jacket",
+    "category": "jackets",
+    "price": 89.99,
+    "image": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600",
+    "sizes": ["S","M","L","XL"],
+    "condition": "Very Good",
+    "brand": "Levi's"
+  },
+  {
+    "id": "10",
+    "name": "Running Shoes",
+    "category": "shoes",
+    "price": 129.99,
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
+    "sizes": ["8","9","10","11","12"],
+    "condition": "Like New",
+    "brand": "Nike"
+  }
+]

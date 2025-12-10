@@ -71,6 +71,7 @@
                 <button class="nav-link" data-page="about" onclick="navigateTo('about')">About</button>
                 <button class="nav-link" data-page="contact" onclick="navigateTo('contact')">Contact</button>
                 <button class="nav-link" data-page="user-dashboard" onclick="navigateTo('user-dashboard')">My Dashboard</button>
+                <button class="nav-link" id="adminLoginBtn" onclick="openAdminLogin()">Admin Login</button>
                 <button class="nav-link admin-only" data-page="admin-dashboard" onclick="navigateTo('admin-dashboard')" style="display: none;">Admin</button>
                 <button class="nav-link logout-btn" onclick="logout()">Logout</button>
             </div>
@@ -492,6 +493,7 @@
                 
                 <div class="admin-section">
                     <h2>Product Management</h2>
+                    <button class="btn btn-primary" id="addProductBtn" onclick="addProduct()" style="margin-bottom:1rem; display:none;">Add Product</button>
                     <div class="admin-product-list" id="adminProductList"></div>
                 </div>
             </div>
