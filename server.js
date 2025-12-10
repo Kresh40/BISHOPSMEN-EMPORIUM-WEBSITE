@@ -31,7 +31,8 @@ function writeProducts(products) {
 app.use(express.static(path.join(__dirname)));
 
 // Simple hard-coded admin credential for demo (DO NOT use in production)
-const DEMO_ADMIN = { email: 'admin@bishopsmen.com', password: 'AdminPass123' };
+// Updated per request
+const DEMO_ADMIN = { email: 'kreshline22@gmail.com', password: '@dan664422' };
 
 // Auth route
 app.post('/api/login', (req, res) => {
