@@ -37,15 +37,17 @@ const DEMO_ADMIN = { email: 'kreshline22@gmail.com', password: '@dan664422' };
 // Auth route
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: 'Missing credentials' });
+    if (!password) return res.status(400).json({ error: 'Missing password' });
 
-    if (email === DEMO_ADMIN.email && password === DEMO_ADMIN.password) {
-        const payload = { email, role: 'admin' };
+    // For this demo, any email is accepted but only the secret password grants admin
+    if (password === DEMO_ADMIN.password) {
+        const userEmail = email || DEMO_ADMIN.email;
+        const payload = { email: userEmail, role: 'admin' };
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '8h' });
-        return res.json({ token, user: { email, role: 'admin', name: 'Admin User' } });
+        return res.json({ token, user: { email: userEmail, role: 'admin', name: 'Admin User' } });
     }
 
-    return res.status(401).json({ error: 'Invalid credentials' });
+    return res.status(401).json({ error: 'Invalid password' });
 });
 
 // Middleware to protect routes
