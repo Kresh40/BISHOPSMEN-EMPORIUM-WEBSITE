@@ -673,3 +673,162 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.addEventListener('submit', handleRegister);
     }
 });
+
+// ===== DASHBOARD FUNCTIONS =====
+
+// Check if user is admin (for demo, check localStorage)
+function isAdmin() {
+    return localStorage.getItem('isAdmin') === 'true';
+}
+
+// Show/hide admin dashboard based on role
+function updateAdminDashboardVisibility() {
+    const adminLink = document.querySelector('.admin-only');
+    if (adminLink) {
+        adminLink.style.display = isAdmin() ? 'block' : 'none';
+    }
+}
+
+// Load admin dashboard data
+function loadAdminDashboard() {
+    // Sample data - in real app, fetch from backend
+    const totalOrders = 42;
+    const totalRevenue = 1250000; // NGN
+    const activeUsers = 156;
+    const totalProducts = products.length;
+    
+    document.getElementById('totalOrders').textContent = totalOrders;
+    document.getElementById('totalRevenue').textContent = formatNaira(totalRevenue);
+    document.getElementById('activeUsers').textContent = activeUsers;
+    document.getElementById('totalProducts').textContent = totalProducts;
+    
+    // Load recent orders
+    const ordersTableBody = document.getElementById('ordersTableBody');
+    const sampleOrders = [
+        { id: 'ORD-001', customer: 'John Doe', amount: 89999, status: 'Completed', date: '2024-12-08' },
+        { id: 'ORD-002', customer: 'Jane Smith', amount: 125000, status: 'Pending', date: '2024-12-09' },
+        { id: 'ORD-003', customer: 'Mike Johnson', amount: 74999, status: 'Completed', date: '2024-12-09' }
+    ];
+    
+    if (sampleOrders.length > 0) {
+        ordersTableBody.innerHTML = sampleOrders.map(order => `
+            <tr>
+                <td>${order.id}</td>
+                <td>${order.customer}</td>
+                <td>${formatNaira(order.amount)}</td>
+                <td><span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.875rem; background: ${order.status === 'Completed' ? 'rgba(76, 175, 80, 0.1); color: #4CAF50;' : 'rgba(255, 152, 0, 0.1); color: #FF9800;'}">${order.status}</span></td>
+                <td>${order.date}</td>
+            </tr>
+        `).join('');
+    }
+    
+    // Load product list
+    const adminProductList = document.getElementById('adminProductList');
+    adminProductList.innerHTML = products.map(product => `
+        <div class="admin-product-item">
+            <div class="admin-product-image">
+                <img src="${product.image}" alt="${product.name}">
+            </div>
+            <div class="admin-product-info">
+                <div class="admin-product-name">${product.name}</div>
+                <div class="admin-product-details">${product.brand} • ${product.category} • ${formatNaira(usdToNgn(product.price))}</div>
+            </div>
+            <div class="admin-product-actions">
+                <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Edit</button>
+                <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Delete</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Load user dashboard data
+function loadUserDashboard() {
+    // Sample user data
+    const userName = localStorage.getItem('userName') || 'John Doe';
+    const userEmail = localStorage.getItem('userEmail') || 'john@example.com';
+    
+    document.getElementById('userFullName').textContent = userName;
+    document.getElementById('userEmail').textContent = userEmail;
+    document.getElementById('userMemberSince').textContent = 'December 2024';
+    
+    // User stats
+    const userOrderCount = 3;
+    const userTotalSpent = 289998; // NGN
+    
+    document.getElementById('userOrderCount').textContent = userOrderCount;
+    document.getElementById('userTotalSpent').textContent = formatNaira(userTotalSpent);
+    document.getElementById('userFavorites').textContent = '5';
+    
+    // Sample user orders
+    const userOrders = document.getElementById('userOrders');
+    const sampleUserOrders = [
+        {
+            id: 'ORD-001',
+            date: '2024-12-08',
+            status: 'completed',
+            items: [
+                { name: 'Oxford Dress Shirt', price: 74999, image: products[1].image }
+            ],
+            total: 89999
+        },
+        {
+            id: 'ORD-002',
+            date: '2024-12-05',
+            status: 'completed',
+            items: [
+                { name: 'Leather Dress Shoes', price: 134999, image: products[3].image }
+            ],
+            total: 144998
+        }
+    ];
+    
+    if (sampleUserOrders.length > 0) {
+        userOrders.innerHTML = sampleUserOrders.map(order => `
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-id">Order #${order.id}</div>
+                    <div class="order-status ${order.status}">${order.status === 'completed' ? 'Completed' : 'Pending'}</div>
+                </div>
+                <div class="order-items">
+                    ${order.items.map(item => `
+                        <div class="order-item">
+                            <div class="order-item-image">
+                                <img src="${item.image}" alt="${item.name}">
+                            </div>
+                            <div class="order-item-info">
+                                <div class="order-item-name">${item.name}</div>
+                                <div class="order-item-price">${formatNaira(item.price)}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="order-total">
+                    <div class="order-total-label">Total</div>
+                    <div class="order-total-value">${formatNaira(order.total)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+// Toggle edit profile
+function toggleEditProfile() {
+    alert('Edit Profile functionality would open a modal form');
+}
+
+// Override navigateTo to handle dashboard loading
+const originalNavigateTo = navigateTo;
+function navigateTo(page) {
+    originalNavigateTo(page);
+    
+    if (page === 'admin-dashboard') {
+        loadAdminDashboard();
+    } else if (page === 'user-dashboard') {
+        loadUserDashboard();
+    }
+}
+
+// Update admin visibility on page load
+document.addEventListener('DOMContentLoaded', () => {
+    updateAdminDashboardVisibility();
+});
