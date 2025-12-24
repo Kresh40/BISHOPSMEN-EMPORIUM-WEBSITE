@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bishopsmen Emporium - Premium Men's Fashion</title>
+    <meta name="description" content="Premium Men's Fashion - Polos, T-shirts, Trousers, Shoes & Belts. Free delivery in Lagos for orders above ₦1,000,000">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+     <div class="top-bar" id="topBar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="top-bar-left">
+                    <a href="#" class="top-bar-link"><i class="fas fa-map-marker-alt"></i> Lagos, Nigeria</a>
+                    <a href="#" class="top-bar-link"><i class="fas fa-headset"></i> Customer Service</a>
+                </div>
+                <div class="top-bar-right" id="topBarRight">
+                    <a href="#" class="top-bar-link" onclick="event.preventDefault(); openAuthModal('signup')"><i class="fas fa-user-plus"></i> Sign Up</a>
+                    <a href="#" class="top-bar-link" onclick="event.preventDefault(); openAuthModal('login')"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+                        <i class="fas fa-moon theme-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo" onclick="navigateTo('home')">
+                    <span class="logo-main">BISHOPSMEN</span>
+                    <span class="logo-sub">Emporium</span>
+                </div>
+
+                <div class="search-section">
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search for products..." id="searchInput">
+                        <button class="search-btn" onclick="performSearch()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="user-section">
+                    <div class="user-action" id="userActionContainer">
+                        <a href="#" class="user-action-link" onclick="event.preventDefault(); openAuthModal('login')">
+                            <i class="fas fa-user-circle"></i>
+                            <span class="action-label">Account</span>
+                        </a>
+                    </div>
+                    <div class="user-action">
+                        <a href="#" class="user-action-link" onclick="event.preventDefault(); toggleCart()">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="action-label">Cart</span>
+                            <span class="cart-count" id="cartCount">0</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="container">
+            <div class="nav-content">
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-links" id="navLinks">
+                    <a href="#" class="nav-link" onclick="navigateTo('home')">Home</a>
+                    <a href="#" class="nav-link" onclick="filterCategory('polos')">Polos</a>
+                    <a href="#" class="nav-link" onclick="filterCategory('shirts')">Shirts</a>
+                    <a href="#" class="nav-link" onclick="filterCategory('pants')">Trousers</a>
+                    <a href="#" class="nav-link" onclick="filterCategory('shoes')">Shoes</a>
+                    <a href="#" class="nav-link" onclick="filterCategory('belts')">Belts</a>
+                </div>
+
+                <div class="nav-promo">
+                    <i class="fas fa-truck"></i>
+                    Free Delivery in Lagos for orders above ₦1M
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <!-- Hero Slider -->
+            <div class="hero-slider" id="heroSlider">
+                <div class="slide active">
+                    <img src="https://images.unsplash.com/photo-1558769132-cb1c458e4222?w=1600&auto=format&fit=crop" alt="Premium Fashion">
+                    <div class="slide-content">
+                        <h1 class="slide-title">Exclusive Collection</h1>
+                        <p class="slide-description">Premium Polos, T-shirts & Trousers</p>
+                        <a href="#" class="slide-btn" onclick="navigateTo('shop')">Shop Now</a>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?w=1600&auto=format&fit=crop" alt="Men's Shoes">
+                    <div class="slide-content">
+                        <h1 class="slide-title">Premium Footwear</h1>
+                        <p class="slide-description">Luxury Shoes & Belts Collection</p>
+                        <a href="#" class="slide-btn" onclick="filterCategory('shoes')">Shop Shoes</a>
+                    </div>
+                </div>
+                <div class="slider-controls">
+                    <button class="slider-btn" onclick="previousSlide()"><i class="fas fa-chevron-left"></i></button>
+                    <button class="slider-btn" onclick="nextSlide()"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="slider-dots">
+                    <span class="dot active" onclick="goToSlide(0)"></span>
+                    <span class="dot" onclick="goToSlide(1)"></span>
+                </div>
+            </div>
+
+            <!-- Quick Categories -->
+            <div class="quick-categories">
+                <div class="container">
+                    <div class="categories-grid">
+                        <a href="#" class="category-card" onclick="filterCategory('polos')">
+                            <div class="category-icon"><i class="fas fa-tshirt"></i></div>
+                            <span class="category-name">Polos</span>
+                        </a>
+                        <a href="#" class="category-card" onclick="filterCategory('tshirts')">
+                            <div class="category-icon"><i class="fas fa-tshirt"></i></div>
+                            <span class="category-name">T-Shirts</span>
+                        </a>
+                        <a href="#" class="category-card" onclick="filterCategory('pants')">
+                            <div class="category-icon"><i class="fas fa-user-secret"></i></div>
+                            <span class="category-name">Trousers</span>
+                        </a>
+                        <a href="#" class="category-card" onclick="filterCategory('shoes')">
+                            <div class="category-icon"><i class="fas fa-shoe-prints"></i></div>
+                            <span class="category-name">Shoes</span>
+                        </a>
+                        <a href="#" class="category-card" onclick="filterCategory('belts')">
+                            <div class="category-icon"><i class="fas fa-circle-notch"></i></div>
+                            <span class="category-name">Belts</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Products -->
+            <div class="featured-products">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-crown"></i>
+                            Featured Collections
+                        </h2>
+                    </div>
+                    <div class="products-grid" id="featuredProducts"></div>
+                </div>
+            </div>
+
+            <!-- Value Props -->
+            <div class="value-props">
+                <div class="container">
+                    <div class="props-grid">
+                        <div class="prop-card">
+                            <div class="prop-icon"><i class="fas fa-shipping-fast"></i></div>
+                            <div class="prop-content">
+                                <h3 class="prop-title">Free Delivery</h3>
+                                <p class="prop-description">On orders above ₦1M in Lagos</p>
+                            </div>
+                        </div>
+                        <div class="prop-card">
+                            <div class="prop-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="prop-content">
+                                <h3 class="prop-title">Secure Payment</h3>
+                                <p class="prop-description">100% secure payment</p>
+                            </div>
+                        </div>
+                        <div class="prop-card">
+                            <div class="prop-icon"><i class="fas fa-undo"></i></div>
+                            <div class="prop-content">
+                                <h3 class="prop-title">14-Day Returns</h3>
+                                <p class="prop-description">Easy return policy</p>
+                            </div>
+                        </div>
+                        <div class="prop-card">
+                            <div class="prop-icon"><i class="fas fa-headset"></i></div>
+                            <div class="prop-content">
+                                <h3 class="prop-title">Premium Support</h3>
+                                <p class="prop-description">Dedicated customer service</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Shop Page -->
+        <section id="shop" class="page">
+            <div class="container">
+                <div class="featured-products">
+                    <div class="section-header">
+                        <h2 class="section-title">All Products</h2>
+                    </div>
+                    <div class="products-grid" id="shopProducts"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3 class="cart-title">
+                <i class="fas fa-shopping-cart"></i>
+                Shopping Cart
+            </h3>
+            <button class="cart-close" onclick="toggleCart()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-body" id="cartBody"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">₦0</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">
+                <i class="fas fa-lock"></i> Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <button class="auth-modal-close" onclick="closeAuthModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="authModalBody"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <h3 class="footer-title">Shop Categories</h3>
+                        <ul class="footer-links">
+                            <li><a href="#" onclick="filterCategory('polos')">Polos</a></li>
+                            <li><a href="#" onclick="filterCategory('tshirts')">T-Shirts</a></li>
+                            <li><a href="#" onclick="filterCategory('pants')">Trousers</a></li>
+                            <li><a href="#" onclick="filterCategory('shoes')">Shoes</a></li>
+                            <li><a href="#" onclick="filterCategory('belts')">Belts</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-title">Customer Service</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Delivery Information</a></li>
+                            <li><a href="#">Returns & Exchanges</a></li>
+                            <li><a href="#">Size Guide</a></li>
+                            <li><a href="#">FAQs</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-title">About Bishopsmen</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Our Story</a></li>
+                            <li><a href="#">Quality Promise</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms & Conditions</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-title">Contact Information</h3>
+                        <div class="contact-info-footer">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>contact@bishopsmen.com</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Mon-Sat: 9AM-6PM</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Lagos, Nigeria</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p class="copyright">© 2025 Bishopsmen Emporium. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

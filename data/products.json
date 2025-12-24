@@ -5,7 +5,13 @@
     "category": "polos",
     "price": 49.99,
     "image": "https://images.unsplash.com/photo-1618799613432-92b276e96a7d?w=600",
-    "sizes": ["S","M","L","XL","XXL"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
     "condition": "Excellent",
     "brand": "Ralph Lauren"
   },
@@ -15,7 +21,11 @@
     "category": "shirts",
     "price": 49.99,
     "image": "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600",
-    "sizes": ["M","L","XL"],
+    "sizes": [
+      "M",
+      "L",
+      "XL"
+    ],
     "condition": "Like New",
     "brand": "Brooks Brothers"
   },
@@ -25,7 +35,13 @@
     "category": "shorts",
     "price": 39.99,
     "image": "https://images.unsplash.com/photo-1517949645590-b03de20d69a6?w=600",
-    "sizes": ["28","30","32","34","36"],
+    "sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36"
+    ],
     "condition": "Excellent",
     "brand": "Tommy Hilfiger"
   },
@@ -35,7 +51,13 @@
     "category": "shoes",
     "price": 89.99,
     "image": "https://images.unsplash.com/photo-1614252369475-531eba835eb1?w=600",
-    "sizes": ["9","9.5","10","10.5","11"],
+    "sizes": [
+      "9",
+      "9.5",
+      "10",
+      "10.5",
+      "11"
+    ],
     "condition": "Very Good",
     "brand": "Allen Edmonds"
   },
@@ -45,7 +67,12 @@
     "category": "pants",
     "price": 69.99,
     "image": "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600",
-    "sizes": ["32","34","36","38"],
+    "sizes": [
+      "32",
+      "34",
+      "36",
+      "38"
+    ],
     "condition": "Like New",
     "brand": "J.Crew"
   },
@@ -55,7 +82,9 @@
     "category": "accessories",
     "price": 29.99,
     "image": "https://images.unsplash.com/photo-1589756823695-278bc8f28e1b?w=600",
-    "sizes": ["One Size"],
+    "sizes": [
+      "One Size"
+    ],
     "condition": "Excellent",
     "brand": "Hermès"
   },
@@ -65,7 +94,12 @@
     "category": "accessories",
     "price": 39.99,
     "image": "https://images.unsplash.com/photo-1624222247344-550fb60583bb?w=600",
-    "sizes": ["32","34","36","38"],
+    "sizes": [
+      "32",
+      "34",
+      "36",
+      "38"
+    ],
     "condition": "Very Good",
     "brand": "Coach"
   },
@@ -75,7 +109,12 @@
     "category": "jackets",
     "price": 89.99,
     "image": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600",
-    "sizes": ["S","M","L","XL"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
     "condition": "Very Good",
     "brand": "Levi's"
   },
@@ -85,8 +124,48 @@
     "category": "shoes",
     "price": 129.99,
     "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
-    "sizes": ["8","9","10","11","12"],
+    "sizes": [
+      "8",
+      "9",
+      "10",
+      "11",
+      "12"
+    ],
     "condition": "Like New",
     "brand": "Nike"
+  },
+  {
+    "name": "Nicki T-Shirt",
+    "price": 30,
+    "category": "polo",
+    "brand": "Nicki",
+    "image": "https://i.pinimg.com/1200x/ee/ec/49/eeec4984752ee746f8228aa2c5e5a0fc.jpg",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "condition": "Like New",
+    "id": "1765391588751"
+  },
+  {
+    "name": "Moreschi Black Cover Shoe",
+    "price": 40,
+    "category": "uncategorized",
+    "brand": "Moreschi",
+    "image": "https://i.pinimg.com/1200x/c3/62/b1/c362b171c0fce85d2182823067022282.jpg",
+    "sizes": [
+      "32",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44",
+      "45",
+      "46",
+      "47"
+    ],
+    "condition": "Like New",
+    "id": "1765392016845"
   }
 ]
